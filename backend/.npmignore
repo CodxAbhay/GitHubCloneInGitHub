@@ -1,0 +1,7 @@
+.env
+.AbhayGit
+node_modules
+*.tgz
+.cursor
+terminals
+agent-transcripts

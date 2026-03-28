@@ -1,0 +1,109 @@
+:root {
+  /* Enhanced Premium Dark Theme */
+  --gh-canvas-default: #0a0a0f; /* Deep modern dark */
+  --gh-canvas-subtle: #12121a;
+  --gh-canvas-inset: #050508;
+  --gh-fg-default: #f3f4f6;
+  --gh-fg-muted: #9ca3af;
+  --gh-border-default: rgba(255, 255, 255, 0.08);
+  --gh-border-muted: rgba(255, 255, 255, 0.04);
+  
+  /* Vibrant Accents */
+  --gh-accent-fg: #8b5cf6; /* Vibrant Purple */
+  --gh-accent-emphasis: #7c3aed;
+  --gh-success-fg: #10b981; /* Neomint Green */
+  --gh-success-emphasis: #059669;
+  --gh-success-subtle: rgba(16, 185, 129, 0.16);
+  --gh-danger-fg: #f43f5e; /* Rose Red */
+  --gh-danger-subtle: rgba(244, 63, 94, 0.16);
+  
+  --gh-shadow-small: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+
+  /* Glassmorphism & Modern Utilities */
+  --glass-bg: rgba(18, 18, 26, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glow-primary: 0 0 20px rgba(139, 92, 246, 0.4);
+  --glow-success: 0 0 20px rgba(16, 185, 129, 0.4);
+
+  font-family: 'Inter', 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base Animations & Utilities */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: var(--gh-shadow-small);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-panel:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #a78bfa, #f472b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--gh-canvas-default);
+  color: var(--gh-fg-default);
+}
+
+a {
+  color: var(--gh-accent-fg);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(47, 129, 247, 0.7);
+  outline-offset: 2px;
+}

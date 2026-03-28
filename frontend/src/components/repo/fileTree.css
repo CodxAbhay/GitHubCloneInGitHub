@@ -1,0 +1,35 @@
+.file-tree{
+  font-size:14px;
+  user-select:none;
+}
+
+.file-node{
+  cursor:pointer;
+  padding:6px 8px;
+  border-radius:6px;
+}
+
+.file-node:hover{
+  background:#21262d;
+}
+
+.folder-name{
+  cursor:pointer;
+  padding:6px 8px;
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.folder-name:hover{
+  background:#21262d;
+}
+
+.folder-arrow{
+  width:12px;
+}
+
+.folder-children{
+  margin-left:4px;
+}

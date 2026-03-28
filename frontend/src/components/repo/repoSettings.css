@@ -1,0 +1,333 @@
+.settings-page-wrap {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 32px 40px;
+  color: var(--gh-fg-default);
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.settings-content {
+  display: flex;
+  gap: 40px;
+  margin-top: 32px;
+}
+
+.settings-sidebar {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--gh-border-default);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--gh-shadow-small);
+  height: max-content;
+}
+
+.settings-nav-item {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gh-fg-default);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.settings-nav-item:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.settings-nav-item.active {
+  font-weight: 600;
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--gh-accent-fg);
+}
+
+.settings-nav-item.danger-nav {
+  color: var(--gh-danger-fg);
+  margin-top: 16px;
+  border-top: 1px solid var(--gh-border-muted);
+  border-radius: 0 0 8px 8px;
+  padding-top: 16px;
+}
+
+.settings-nav-item.danger-nav:hover {
+  background: var(--gh-danger-subtle);
+}
+
+.settings-main {
+  flex: 1;
+  max-width: 850px;
+}
+
+.settings-section {
+  margin-bottom: 48px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--gh-border-default);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: var(--gh-shadow-small);
+}
+
+.settings-section h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  border-bottom: 1px solid var(--gh-border-muted);
+  padding-bottom: 16px;
+  color: #fff;
+}
+
+.settings-desc {
+  color: var(--gh-fg-muted);
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.add-collaborator-box {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--gh-border-muted);
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 32px;
+}
+
+.add-collab-form {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.add-collab-form input {
+  flex: 1;
+  background: rgba(5,5,8,0.5);
+  border: 1px solid var(--gh-border-muted);
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: #fff;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.add-collab-form input:focus {
+  outline: none;
+  border-color: var(--gh-accent-fg);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.add-collab-form button {
+  background: linear-gradient(135deg, var(--gh-success-fg), var(--gh-success-emphasis));
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.add-collab-form button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
+}
+
+.add-collab-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.collaborators-list {
+  border: 1px solid var(--gh-border-muted);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.01);
+  overflow: hidden;
+}
+
+.collab-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--gh-border-muted);
+  transition: background 0.2s;
+}
+
+.collab-row:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.collab-row:last-child {
+  border-bottom: none;
+}
+
+.collab-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.collab-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--gh-border-muted);
+  flex-shrink: 0;
+}
+
+.collab-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: #fff;
+}
+
+.collab-name span {
+  color: var(--gh-fg-muted);
+  font-weight: 400;
+  margin-left: 8px;
+  font-size: 14px;
+}
+
+.collab-email {
+  font-size: 13px;
+  color: var(--gh-fg-muted);
+  margin-top: 6px;
+}
+
+.collab-remove-btn {
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  color: var(--gh-danger-fg);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.collab-remove-btn:hover {
+  background: var(--gh-danger-fg);
+  color: white;
+  border-color: var(--gh-danger-fg);
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+  transform: translateY(-2px);
+}
+
+.collab-empty {
+  padding: 32px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--gh-fg-muted);
+  font-style: italic;
+}
+
+.owner-row {
+  background: rgba(139, 92, 246, 0.05);
+}
+
+/* DANGER ZONE */
+.danger-heading {
+  color: var(--gh-danger-fg) !important;
+  border-color: var(--gh-danger-fg) !important;
+}
+
+.danger-box {
+  border: 1px solid var(--gh-danger-fg);
+  border-radius: 12px;
+  padding: 24px;
+  background: rgba(244, 63, 94, 0.05);
+}
+
+.danger-box-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.danger-box-content strong {
+  font-size: 15px;
+  color: #fff;
+}
+
+.danger-box-content p {
+  font-size: 14px;
+  color: var(--gh-fg-muted);
+  line-height: 1.5;
+  margin: 4px 0 0;
+}
+
+.danger-action-area {
+  margin-top: 16px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(244, 63, 94, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.danger-action-area label {
+  font-size: 14px;
+  color: var(--gh-fg-default);
+  font-weight: 500;
+}
+
+.danger-action-area input {
+  background: rgba(5,5,8,0.5);
+  border: 1px solid var(--gh-border-muted);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #fff;
+  font-family: monospace;
+  transition: border-color 0.2s;
+}
+
+.danger-action-area input:focus {
+  outline: none;
+  border-color: var(--gh-danger-fg);
+}
+
+.delete-repo-btn {
+  align-self: flex-start;
+  margin-top: 8px;
+  background: var(--gh-danger-fg);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+}
+
+.delete-repo-btn:hover:not(:disabled) {
+  background: #e11d48;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(244, 63, 94, 0.4);
+}
+
+.delete-repo-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@media (max-width: 850px) {
+  .settings-content {
+    flex-direction: column;
+  }
+  .settings-sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}

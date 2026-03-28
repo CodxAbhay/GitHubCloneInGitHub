@@ -1,0 +1,256 @@
+/* =====================================
+   LOGIN / AUTH GENERIC LAYOUT
+===================================== */
+.signup-page, .signup-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--gh-canvas-inset);
+  color: var(--gh-fg-default);
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Background glows */
+.signup-container::before, .signup-page::before {
+  content: '';
+  position: absolute;
+  top: -20vh;
+  left: -10vw;
+  width: 70vw;
+  height: 70vw;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent 60%);
+  filter: blur(80px);
+  z-index: 0;
+  animation: float 10s infinite alternate ease-in-out;
+}
+
+.signup-container::after, .signup-page::after {
+  content: '';
+  position: absolute;
+  bottom: -20vh;
+  right: -10vw;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(244, 114, 182, 0.08), transparent 60%);
+  filter: blur(80px);
+  z-index: 0;
+  animation: float 12s infinite alternate-reverse ease-in-out;
+}
+
+.signup-content, .signup-page-inner {
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 80px;
+  padding: 80px;
+  position: relative;
+  z-index: 10;
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* For backwards compatibility with Signup.jsx which uses slightly different names */
+.signup-page {
+  flex-direction: row; 
+  align-items: stretch;
+}
+
+/* LEFT PANEL */
+.left-panel, .signup-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+  flex: 1;
+}
+
+.signup-left {
+  padding: 80px;
+}
+
+.left-panel h1, .signup-left h1 {
+  font-size: clamp(36px, 4vw, 48px);
+  font-weight: 800;
+  margin-bottom: 24px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff, var(--gh-fg-muted));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.left-panel p, .signup-left p {
+  font-size: 18px;
+  color: var(--gh-fg-muted);
+  max-width: 450px;
+  line-height: 1.6;
+}
+
+.logo-login, .logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 32px;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+}
+
+/* RIGHT PANEL - FORM CARD */
+.right-panel, .signup-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.form-card, .signup-form {
+  width: 100%;
+  max-width: 440px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--gh-border-default);
+  border-radius: 20px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.form-card::before, .signup-form::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 4px;
+  background: linear-gradient(90deg, var(--gh-accent-fg), #f472b6);
+}
+
+.form-card h2, .signup-form h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 32px;
+  color: #fff;
+}
+
+/* Override .signup-form specific if it's not a card itself but inside .signup-right */
+.signup-right {
+  width: 420px;
+  background: transparent;
+}
+
+/* FORM GROUP */
+.form-group, .field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.form-group label, .field label {
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--gh-fg-default);
+}
+
+.form-group input, .field input {
+  height: 48px;
+  padding: 0 16px;
+  background-color: rgba(5, 5, 8, 0.5);
+  border: 1px solid var(--gh-border-muted);
+  border-radius: 12px;
+  color: var(--gh-fg-default);
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.form-group input:focus, .field input:focus {
+  outline: none;
+  border-color: var(--gh-accent-fg);
+  background-color: rgba(0,0,0,0.8);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+/* BUTTON */
+.submit-btn, .signup-btn {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(135deg, var(--gh-accent-fg), var(--gh-accent-emphasis)) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  color: #fff !important;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3) !important;
+}
+
+.submit-btn:hover, .signup-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 20px rgba(139, 92, 246, 0.5) !important;
+  filter: brightness(1.1) !important;
+}
+
+/* TEXT */
+.login-text, .signin-text {
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--gh-fg-muted);
+  text-align: center;
+}
+
+.login-text a, .signin-text a {
+  color: var(--gh-accent-fg);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.login-text a:hover, .signin-text a:hover {
+  text-decoration: none;
+  color: var(--gh-accent-emphasis);
+  text-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .signup-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 40px;
+  }
+  .left-panel, .signup-left {
+    text-align: center;
+    align-items: center;
+  }
+  .left-panel p, .signup-left p {
+    max-width: 100%;
+  }
+  .signup-page {
+    flex-direction: column;
+  }
+  .signup-right {
+    width: 100%;
+    padding: 20px;
+  }
+}
+@media (max-width: 600px) {
+  .signup-content {
+    padding: 20px;
+  }
+  .form-card, .signup-form {
+    padding: 32px 24px;
+  }
+  .signup-left {
+    padding: 40px 20px;
+  }
+}

@@ -1,0 +1,126 @@
+🚀 GitHub Clone CLI (Simple & Beginner-Friendly Guide)
+This CLI lets you push your local files to your GitHub-like system so they appear instantly in your frontend.
+________________________________________
+🧠 What is this CLI?
+Think of this like a simplified version of:
+git push
+Instead of Git, you are using:
+node index.js push-api
+👉 It takes your files → sends them to backend → backend stores them → frontend shows them.
+________________________________________
+🔄 How Everything Works (Big Picture)
+Your Folder → CLI → Backend API → Storage (S3) → Frontend UI
+•	CLI reads your files
+•	Backend saves them under your repo
+•	Frontend displays them
+________________________________________
+✅ Prerequisites
+Before pushing code, make sure:
+•	Backend is running locally OR deployed
+•	You have your repoId
+•	You have created a PAT (Personal Access Token)
+________________________________________
+🪜 Step-by-Step Guide
+________________________________________
+🔹 Step 1: Start Backend
+If running locally:
+node index.js start
+Backend will run on:
+http://localhost:3002
+________________________________________
+🔹 Step 2: Login (One Time)
+node index.js login --backend http://localhost:3002 --email you@example.com --password yourPassword
+👉 This saves your login token on your system.
+________________________________________
+🔹 Step 3: Create PAT (Important)
+node index.js pat:create --backend http://localhost:3002 --name "my-laptop"
+👉 You will get something like:
+pat_abc123xyz
+👉 Copy this token. You will use it while pushing.
+________________________________________
+🔹 Step 4: Get repoId
+•	Open your frontend
+•	Open your repository page
+•	Find: “Push from terminal”
+Example:
+repo_123abc
+________________________________________
+🚀 Step 5: Push Your Code
+✔️ Method 1: From inside folder (Recommended)
+Go to your project folder:
+cd path/to/your/project
+Then run:
+node index.js push-api --backend http://localhost:3002 --repo <repoId> --token <PAT> --message "initial commit" --path .
+👉 --path . means current folder
+________________________________________
+✔️ Method 2: Push from anywhere (Full Path)
+You can push any folder from your system without opening it:
+node index.js push-api --backend http://localhost:3002 --repo <repoId> --token <PAT> --message "upload" --path "C:\Users\YourName\Desktop\my-project"
+________________________________________
+📁 Examples
+Push Desktop folder
+--path "C:\Users\YourName\Desktop\project1"
+Push Downloads folder
+--path "C:\Users\YourName\Downloads\app"
+Push from D drive
+--path "D:\Projects\my-app"
+________________________________________
+📄 Pushing a Single File
+👉 Best practice: always push a folder
+Example:
+my-folder/
+  └── index.js
+Then push the folder:
+--path "C:\Users\YourName\Desktop\my-folder"
+________________________________________
+⚠️ Important Notes
+•	Always use quotes if path has spaces
+•	Example:
+--path "C:\Users\Your Name\Desktop\my project"
+________________________________________
+❌ Common Errors & Fixes
+1. Backend not running
+Error:
+ECONNREFUSED
+Fix:
+node index.js start
+________________________________________
+2. Invalid token
+Error:
+Unauthorized
+Fix: - Create new PAT
+________________________________________
+3. Wrong repoId
+Error:
+Repo not found
+Fix: - Copy correct repoId from frontend
+________________________________________
+4. Permission issue
+Error:
+Forbidden
+Fix: - Make sure you are repo owner or collaborator
+________________________________________
+5. Files not showing in UI
+Reason: - Using old .AbhayGit push
+Fix: - Always use:
+push-api
+________________________________________
+🌍 Using After Deployment
+When backend is deployed, replace localhost:
+--backend https://your-app.onrender.com
+Example:
+node index.js push-api --backend https://your-app.onrender.com --repo repo_123 --token pat_abc --message "update" --path .
+________________________________________
+🧠 Final Understanding
+Whenever you push:
+👉 You are sending your local files → backend → storage → frontend UI
+________________________________________
+🎯 Summary
+•	push-api = your version of git push
+•	--path . = current folder
+•	--path "C:\..." = any folder
+•	repoId = where files go
+•	PAT = authentication
+________________________________________
+🚀 You’re Ready!
+Now you can push any project from anywhere on your computer just like GitHub.

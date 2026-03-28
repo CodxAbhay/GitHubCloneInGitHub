@@ -1,0 +1,11 @@
+this is just randome text and i am testing it for the terminal command
+i am testing the git command and i am writing this in the terminal and i am going to commit this file and push it to the remote repository
+i am going to use the following commands:
+git add TestingGitCommand.txt
+git commit -m "Testing git command"
+git push origin main
+after running these commands, the file will be added to the staging area, committed with the message "Testing git command", and then pushed to the remote repository on the main branch.
+i am also going to check the status of the repository using the command:
+git status
+this will show me the current status of the repository, including any changes that have been made and whether there are any files that need to be committed or pushed.
+i am also going to check the log of the commits using the command:  
