@@ -24,6 +24,7 @@ const Profile = () => {
   const [saveLoading, setSaveLoading] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [profileDraft, setProfileDraft] = useState({
+    username: "",
     avatarUrl: "",
     bio: "",
     leetcode: "",
@@ -58,6 +59,7 @@ const Profile = () => {
 
         setUserDetails(response.data.data);
         setProfileDraft({
+          username: response.data.data?.username || "",
           avatarUrl: response.data.data?.avatarUrl || "",
           bio: response.data.data?.bio || "",
           leetcode: response.data.data?.leetcode || "",
@@ -156,6 +158,7 @@ const Profile = () => {
       await axios.put(
         `${API_BASE_URL}/updateProfile/${userId}`,
         {
+          username: profileDraft.username,
           avatarUrl: profileDraft.avatarUrl,
           bio: profileDraft.bio,
           leetcode: profileDraft.leetcode,
@@ -182,22 +185,35 @@ const Profile = () => {
     }
   };
 
+  const deleteProfile = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to permanently delete your account? This action cannot be undone.");
+    if (!confirmDelete) return;
+
+    try {
+      setSaveLoading(true);
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+      if (!token || !userId) return;
+
+      await axios.delete(
+        `${API_BASE_URL}/deleteProfile/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      handleLogout();
+    } catch (e) {
+      console.error(e);
+      alert("Failed to delete account");
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
   return (
     <>
       <Navbar />
-
-      <UnderlineNav aria-label="Repository">
-        <UnderlineNav.Item icon={BookIcon}>
-          Overview
-        </UnderlineNav.Item>
-
-        <UnderlineNav.Item
-          icon={RepoIcon}
-          onClick={() => navigate("/repo")}
-        >
-          Starred Repositories
-        </UnderlineNav.Item>
-      </UnderlineNav>
 
       <button id="logout" onClick={handleLogout}>
         Logout
@@ -253,6 +269,15 @@ const Profile = () => {
 
           {editing && (
             <div className="profile-edit">
+              <label>Username</label>
+              <input
+                value={profileDraft.username}
+                onChange={(e) =>
+                  setProfileDraft((d) => ({ ...d, username: e.target.value }))
+                }
+                placeholder="Your username"
+              />
+
               <label>Avatar URL</label>
               <input
                 value={profileDraft.avatarUrl}
@@ -327,9 +352,21 @@ const Profile = () => {
               />
 
               {saveError && <div className="form-error">{saveError}</div>}
-              <button className="create-btn" type="button" disabled={saveLoading} onClick={saveProfile}>
-                {saveLoading ? "Saving…" : "Save"}
+              <button className="create-btn" style={{ background: 'linear-gradient(135deg, var(--gh-success-fg), var(--gh-success-emphasis))', color: 'white', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', marginTop: '8px' }} type="button" disabled={saveLoading} onClick={saveProfile}>
+                {saveLoading ? "Saving…" : "Save Profile Updates"}
               </button>
+
+              <div style={{ marginTop: '24px', borderTop: '1px solid var(--gh-border-muted)', paddingTop: '16px' }}>
+                <h4 style={{ color: 'var(--gh-danger-fg)', fontSize: '14px', margin: '0 0 8px' }}>Danger Zone</h4>
+                <button 
+                  type="button" 
+                  disabled={saveLoading} 
+                  onClick={deleteProfile}
+                  style={{ width: '100%', background: 'rgba(244, 63, 94, 0.1)', color: 'var(--gh-danger-fg)', border: '1px solid rgba(244, 63, 94, 0.3)', padding: '10px', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}
+                >
+                  Delete Account
+                </button>
+              </div>
             </div>
           )}
 
@@ -371,26 +408,48 @@ const Profile = () => {
         </div>
 
         {/* RIGHT CONTENT */}
-        <div className="heat-map-section">
-          <HeatMapProfile userId={userDetails?._id} />
+        <div className="profile-main-content">
+          <div className="profile-nav">
+            <UnderlineNav aria-label="Repository">
+              <UnderlineNav.Item icon={BookIcon} selected>
+                Overview
+              </UnderlineNav.Item>
+              <UnderlineNav.Item
+                icon={RepoIcon}
+                onClick={() => navigate("/repo")}
+              >
+                Starred Repositories
+              </UnderlineNav.Item>
+            </UnderlineNav>
+          </div>
+
           <div className="public-repos-block">
-            <h4>Public repositories</h4>
+            <h3 className="section-title">Popular repositories</h3>
             {publicRepos.length === 0 ? (
               <div className="public-repo-empty">No public repositories yet.</div>
             ) : (
-              publicRepos.map((repo) => (
-                <div
-                  key={repo._id}
-                  className="public-repo-card"
-                  onClick={() => navigate(`/repo/${repo._id}`)}
-                >
-                  <div className="public-repo-title">{repo.name}</div>
-                  <div className="public-repo-desc">
-                    {repo.description || "No description"}
+              <div className="repo-grid">
+                {publicRepos.map((repo) => (
+                  <div
+                    key={repo._id}
+                    className="public-repo-card"
+                    onClick={() => navigate(`/repo/${repo._id}`)}
+                  >
+                    <div className="repo-card-top">
+                      <div className="public-repo-title">{repo.name}</div>
+                      <span className="public-repo-badge">Public</span>
+                    </div>
+                    <div className="public-repo-desc">
+                      {repo.description || "No description provided."}
+                    </div>
                   </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
+          </div>
+
+          <div className="heat-map-wrapper">
+            <HeatMapProfile userId={userDetails?._id} />
           </div>
         </div>
 
