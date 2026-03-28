@@ -7,12 +7,19 @@ const Commit = require("../models/commitModel");
 const { s3, s3_bucket } = require("../config/aws_config");
 
 function hasWriteAccess(repository, userId) {
-  const isOwner =
-    userId && repository.owner?.toString?.() === userId.toString();
+  const uIdStr = userId?.toString();
+  if (!uIdStr) return false;
+
+  const ownerId = repository.owner?._id ? repository.owner._id.toString() : repository.owner?.toString();
+  const isOwner = ownerId === uIdStr;
+
   const isCollaborator =
-    userId &&
     Array.isArray(repository.collaborators) &&
-    repository.collaborators.some((c) => c.toString() === userId.toString());
+    repository.collaborators.some((c) => {
+      const collId = c._id ? c._id.toString() : c.toString();
+      return collId === uIdStr;
+    });
+
   return Boolean(isOwner || isCollaborator);
 }
 

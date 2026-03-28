@@ -42,7 +42,7 @@ const RepoSettingsPage = () => {
 
       // Verify ownership before proceeding
       const currUser = localStorage.getItem("userId");
-      if (metaData.data.owner?._id !== currUser) {
+      if (String(metaData.data.owner?._id) !== String(currUser)) {
         setError("forbidden");
         return;
       }
@@ -140,6 +140,26 @@ const RepoSettingsPage = () => {
     } catch (err) {
       console.error(err);
       alert("Error deleting repository");
+    }
+  };
+
+  const handleToggleVisibility = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE_URL}/repo/toggel/${id}`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`Repository visibility changed to ${data.data.visibility ? "Public" : "Private"}.`);
+        fetchRepoData();
+      } else {
+        alert(data.message || "Failed to toggle visibility");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error toggling visibility");
     }
   };
 
@@ -278,7 +298,24 @@ const RepoSettingsPage = () => {
               <h2 className="danger-heading">Danger Zone</h2>
               
               <div className="danger-box">
-                <div className="danger-box-content">
+                <div className="danger-box-content" style={{ marginBottom: "24px" }}>
+                  <div>
+                    <strong>Change repository visibility</strong>
+                    <p>This repository is currently {repoMeta?.visibility ? "Public" : "Private"}.</p>
+                  </div>
+                  
+                  <div className="danger-action-area">
+                    <button 
+                      className="header-btn danger delete-repo-btn"
+                      onClick={handleToggleVisibility}
+                      style={{ marginTop: 0 }}
+                    >
+                      Change to {repoMeta?.visibility ? "Private" : "Public"}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="danger-box-content" style={{ paddingTop: "24px", borderTop: "1px solid rgba(244, 63, 94, 0.2)" }}>
                   <div>
                     <strong>Delete this repository</strong>
                     <p>Once you delete a repository, there is no going back. Please be certain.</p>

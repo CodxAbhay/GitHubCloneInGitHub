@@ -40,7 +40,7 @@ const RepositoryPage = () => {
   };
 
   const isOwner = useMemo(
-    () => repoMeta?.owner?._id?.toString?.() === localStorage.getItem("userId"),
+    () => String(repoMeta?.owner?._id) === localStorage.getItem("userId"),
     [repoMeta?.owner?._id],
   );
   const canWrite = useMemo(() => {
@@ -527,7 +527,7 @@ const RepositoryPage = () => {
             Commits
           </button>
           
-          {repoMeta?.owner?._id === localStorage.getItem("userId") && (
+          {isOwner && (
             <button className="tab-button" onClick={() => navigate(`/repo/${id}/settings`)}>
               Settings
             </button>
