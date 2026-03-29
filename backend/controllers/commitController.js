@@ -290,20 +290,26 @@ async function getRepositoryFileTree(req, res) {
 
       let current = tree;
 
-      parts.forEach((part, index) => {
-        if (!current[part]) {
-          if (index === parts.length - 1) {
-            current[part] = {
-              type: "file",
-              url: file.url,
-            };
-          } else {
+      for (let index = 0; index < parts.length; index++) {
+        const part = parts[index];
+        const isLeaf = index === parts.length - 1;
+
+        if (isLeaf) {
+          // Always set/overwrite the file node so the URL is never stale or missing
+          current[part] = {
+            type: "file",
+            url: file.url,
+          };
+          // Do NOT traverse into the file node — stop here
+          break;
+        } else {
+          // Create folder node if it doesn't exist yet
+          if (!current[part] || current[part].type === "file") {
             current[part] = {};
           }
+          current = current[part];
         }
-
-        current = current[part];
-      });
+      }
     }
 
     res.json({
