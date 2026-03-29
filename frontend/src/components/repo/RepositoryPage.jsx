@@ -144,23 +144,8 @@ const RepositoryPage = () => {
     try {
       setSelectedFile(fileName);
 
-      if (!url) {
-        setFileContent("Error: File URL is missing.");
-        setOriginalFileContent("");
-        setEditorContent("");
-        setIsEditingFile(false);
-        return;
-      }
+      const res = await fetch(url);
 
-      let fetchUrl = url;
-      if (url.startsWith("/")) {
-        fetchUrl = `${API_BASE_URL}${url}`;
-      } else if (url.startsWith("http://localhost") && API_BASE_URL.includes("onrender.com")) {
-        // Fallback for old local development DB entries trying to load on production
-        fetchUrl = url.replace(/http:\/\/localhost:\d+/, API_BASE_URL);
-      }
-
-      const res = await fetch(fetchUrl);
       const text = await res.text();
 
       setFileContent(text);
