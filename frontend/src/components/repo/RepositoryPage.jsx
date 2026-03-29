@@ -101,6 +101,10 @@ const RepositoryPage = () => {
 
       if (data.success) {
         alert("File deleted");
+        setSelectedFile(null);
+        setFileContent("");
+        setEditorContent("");
+        setIsEditingFile(false);
         fetchFiles();
       }
     } catch (err) {
@@ -140,8 +144,23 @@ const RepositoryPage = () => {
     try {
       setSelectedFile(fileName);
 
-      const res = await fetch(url);
+      if (!url) {
+        setFileContent("Error: File URL is missing.");
+        setOriginalFileContent("");
+        setEditorContent("");
+        setIsEditingFile(false);
+        return;
+      }
 
+      let fetchUrl = url;
+      if (url.startsWith("/")) {
+        fetchUrl = `${API_BASE_URL}${url}`;
+      } else if (url.startsWith("http://localhost") && API_BASE_URL.includes("onrender.com")) {
+        // Fallback for old local development DB entries trying to load on production
+        fetchUrl = url.replace(/http:\/\/localhost:\d+/, API_BASE_URL);
+      }
+
+      const res = await fetch(fetchUrl);
       const text = await res.text();
 
       setFileContent(text);

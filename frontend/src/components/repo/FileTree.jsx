@@ -11,6 +11,7 @@ const FileTree = ({ tree, onFileClick }) => {
           name={name}
           node={node}
           level={0}
+          path={name}
           onFileClick={onFileClick}
         />
       ))}
@@ -19,7 +20,7 @@ const FileTree = ({ tree, onFileClick }) => {
 
 };
 
-const TreeNode = ({ name, node, level, onFileClick }) => {
+const TreeNode = ({ name, node, level, path, onFileClick }) => {
 
   const [open, setOpen] = useState(false);
 
@@ -32,7 +33,7 @@ const TreeNode = ({ name, node, level, onFileClick }) => {
       <div
         className="file-node"
         style={{ paddingLeft }}
-        onClick={() => onFileClick(node.url, name)}
+        onClick={() => onFileClick(node.url, path)}
       >
         📄 {name}
       </div>
@@ -66,6 +67,7 @@ const TreeNode = ({ name, node, level, onFileClick }) => {
               name={childName}
               node={childNode}
               level={level + 1}
+              path={`${path}/${childName}`}
               onFileClick={onFileClick}
             />
           ))}
