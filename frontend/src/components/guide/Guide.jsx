@@ -1,146 +1,557 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../user/Navbar";
 import "./guide.css";
 
+/* ─── data ─────────────────────────────────────────────── */
+const STEPS = [
+  {
+    id: "install",
+    icon: "📦",
+    title: "Install the CLI",
+    subtitle: "One command. Works on Windows, Mac & Linux.",
+    badge: "Step 1",
+    badgeColor: "purple",
+    content: (
+      <>
+        <p className="guide-para">
+          The <code>antigithub-cli</code> is a standalone npm package. You only
+          need <strong>Node.js</strong> installed — no source code, no GitHub
+          account for npm. Just run:
+        </p>
+        <CodeBlock lang="bash" code={`npm install -g antigithub-cli`} />
+        <p className="guide-para">
+          That's it. The <code>antigithub</code> command is now available
+          globally in your terminal from <strong>any folder</strong>.
+        </p>
+        <InfoBox type="tip">
+          Verify the install worked by running:{" "}
+          <code>antigithub --help</code>
+        </InfoBox>
+      </>
+    ),
+  },
+  {
+    id: "login",
+    icon: "🔐",
+    title: "Login to Your Account",
+    subtitle: "Save your token once — never type it again.",
+    badge: "Step 2",
+    badgeColor: "blue",
+    content: (
+      <>
+        <p className="guide-para">
+          Login with the same email and password you use on the website. Your
+          token will be saved locally so you never need to type it again.
+        </p>
+        <CodeBlock
+          lang="bash"
+          code={`antigithub login --email your@email.com --password yourpassword`}
+        />
+        <p className="guide-para">On success you'll see:</p>
+        <CodeBlock
+          lang="output"
+          code={`✓ Logged in successfully! Token saved to ~/.antigithub-cli.json`}
+        />
+        <InfoBox type="warning">
+          <strong>Never share your password.</strong> Use a PAT (Personal Access
+          Token) for day-to-day pushes instead.
+        </InfoBox>
+      </>
+    ),
+  },
+  {
+    id: "pat",
+    icon: "🔑",
+    title: "Create a Personal Access Token",
+    subtitle: "Safer than a password — create one per device.",
+    badge: "Step 3",
+    badgeColor: "green",
+    content: (
+      <>
+        <p className="guide-para">
+          A PAT is a secure token you use instead of your password. You can
+          revoke it anytime from your profile. Create one named after the device
+          you're using:
+        </p>
+        <CodeBlock lang="bash" code={`antigithub pat:create --name my-laptop`} />
+        <p className="guide-para">You'll see your token exactly once — copy it now:</p>
+        <CodeBlock
+          lang="output"
+          code={`✓ PAT created successfully!
+Your token (copy it now, it won't be shown again):
+
+  pat_390ed7722dc4b2a5de6272485d7469c1302c7049c53c5569`}
+        />
+        <InfoBox type="warning">
+          <strong>Copy your PAT immediately.</strong> It is shown only once and
+          cannot be recovered. If you lose it, just create a new one.
+        </InfoBox>
+        <p className="guide-para">
+          You can now use this PAT instead of your password for all push/pull
+          commands via <code>--token pat_xxx</code>.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: "repoid",
+    icon: "🆔",
+    title: "Find Your Repository ID",
+    subtitle: "Every repo has a unique ID — find yours in 3 seconds.",
+    badge: "Step 4",
+    badgeColor: "orange",
+    content: (
+      <>
+        <p className="guide-para">
+          Every push and pull needs a <strong>Repository ID</strong>. Here's how
+          to find it:
+        </p>
+        <ol className="guide-list">
+          <li>
+            Open <a href="https://antigit.vercel.app/" target="_blank" rel="noreferrer">antigit.vercel.app</a>
+          </li>
+          <li>Go to the repository page</li>
+          <li>
+            Look at the <strong>right sidebar</strong> — find the{" "}
+            <strong>"Repo ID"</strong> card at the bottom
+          </li>
+          <li>Copy the ID (looks like: <code>69a71d5b7bbcef2e404a977b</code>)</li>
+        </ol>
+        <InfoBox type="tip">
+          The Repo ID is also visible in the browser URL when you're on a repo
+          page: <code>antigit.vercel.app/repo/<strong>69a71d5b7bbcef2e404a977b</strong></code>
+        </InfoBox>
+      </>
+    ),
+  },
+  {
+    id: "push",
+    icon: "🚀",
+    title: "Push Your Code",
+    subtitle: "Upload your project files to a repository.",
+    badge: "Step 5",
+    badgeColor: "purple",
+    content: (
+      <>
+        <InfoBox type="warning">
+          <strong>⚠ Always navigate into your project folder first!</strong>{" "}
+          If you push from the wrong directory, you may upload unintended files
+          (like your entire Desktop or Documents folder).
+        </InfoBox>
+
+        <p className="guide-para">
+          First, navigate into your project:
+        </p>
+        <CodeBlock lang="bash" code={`cd C:\\Users\\yourname\\projects\\my-project`} />
+
+        <p className="guide-para">Then push:</p>
+        <CodeBlock
+          lang="bash"
+          code={`antigithub push --repo YOUR_REPO_ID --message "Initial commit"`}
+        />
+
+        <p className="guide-para">
+          The CLI will show a <strong>confirmation screen</strong> before
+          uploading anything:
+        </p>
+        <CodeBlock
+          lang="output"
+          code={`⚠  About to push the following directory:
+   Path:     C:\\Users\\yourname\\projects\\my-project
+   Files:    12 file(s), 45.6 KiB total
+   Repo ID:  69a71d5b7bbcef2e404a977b
+   Message:  Initial commit
+
+   Files to be pushed:
+   + index.js
+   + package.json
+   + src/App.jsx
+   + src/index.css
+   ...
+
+Proceed with push? (y/N): y`}
+        />
+
+        <p className="guide-para">
+          Type <code>y</code> and press Enter. On success:
+        </p>
+        <CodeBlock
+          lang="output"
+          code={`[agh] enumerating objects…
+  12 object(s), 45.6 KiB
+[agh] writing objects…
+[agh] counting objects: 12, done.
+[ok] branch 'main' -> 966b3ba1-a05
+  12 file(s) changed, 45.6 KiB`}
+        />
+
+        <p className="guide-para guide-subheading">Push options:</p>
+        <div className="guide-table-wrap">
+          <table className="guide-table">
+            <thead>
+              <tr><th>Flag</th><th>Description</th><th>Example</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>--repo</code></td>
+                <td>Repository ID <em>(required)</em></td>
+                <td><code>--repo 69a71d5b...</code></td>
+              </tr>
+              <tr>
+                <td><code>--message</code></td>
+                <td>Commit message <em>(default: "Update files")</em></td>
+                <td><code>--message "Fix bug"</code></td>
+              </tr>
+              <tr>
+                <td><code>--path</code></td>
+                <td>Specific folder to push <em>(default: current dir)</em></td>
+                <td><code>--path ./my-project</code></td>
+              </tr>
+              <tr>
+                <td><code>--token</code></td>
+                <td>PAT token <em>(uses saved login if omitted)</em></td>
+                <td><code>--token pat_xxx</code></td>
+              </tr>
+              <tr>
+                <td><code>--yes / -y</code></td>
+                <td>Skip confirmation prompt</td>
+                <td><code>--yes</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </>
+    ),
+  },
+  {
+    id: "pull",
+    icon: "⬇️",
+    title: "Pull Code from a Repo",
+    subtitle: "Download files from any repository to your machine.",
+    badge: "Step 6",
+    badgeColor: "green",
+    content: (
+      <>
+        <p className="guide-para">
+          Pull the latest snapshot of a repository into a local folder:
+        </p>
+        <CodeBlock
+          lang="bash"
+          code={`antigithub pull --repo YOUR_REPO_ID --path ./my-downloaded-project`}
+        />
+        <p className="guide-para">
+          For <strong>private repositories</strong>, include your token:
+        </p>
+        <CodeBlock
+          lang="bash"
+          code={`antigithub pull --repo YOUR_REPO_ID --token pat_xxx --path ./my-project`}
+        />
+        <p className="guide-para">On success:</p>
+        <CodeBlock
+          lang="output"
+          code={`[agh] fetching from https://antigithub-backend.onrender.com …
+  repository: 69a71d5b7bbcef2e404a977b
+[agh] receiving objects: 12, done.
+[ok] updated 12 path(s).
+  HEAD -> 966b3ba1-a055-4a25 | Initial commit`}
+        />
+        <InfoBox type="tip">
+          If you see <em>"skipping file — URL expired"</em>, just re-push that
+          file from your machine to refresh its download URL.
+        </InfoBox>
+      </>
+    ),
+  },
+];
+
+const UTILS = [
+  {
+    cmd: "antigithub whoami",
+    desc: "Show who you're currently logged in as, along with the backend URL and user ID",
+    icon: "👤",
+  },
+  {
+    cmd: "antigithub logout",
+    desc: "Delete your saved credentials from this machine",
+    icon: "🚪",
+  },
+  {
+    cmd: "antigithub --help",
+    desc: "Show all available commands and options",
+    icon: "❓",
+  },
+  {
+    cmd: "antigithub push --help",
+    desc: "Show all available options for the push command",
+    icon: "📖",
+  },
+];
+
+const MISTAKES = [
+  {
+    problem: 'Unknown arguments: message "..."',
+    cause: "Missing -- before message flag",
+    fix: 'Use --message "your text" (double hyphens)',
+    bad: 'antigithub push --repo ID message "text"',
+    good: 'antigithub push --repo ID --message "text"',
+  },
+  {
+    problem: "Pushed the wrong folder",
+    cause: "Ran push from the wrong directory",
+    fix: "Use --path ./correct-folder to specify exact folder",
+    bad: "antigithub push --repo ID (from Desktop)",
+    good: "cd my-project && antigithub push --repo ID",
+  },
+  {
+    problem: "error: No token found",
+    cause: "Not logged in and no --token provided",
+    fix: "Run antigithub login first, or pass --token pat_xxx",
+    bad: "antigithub push --repo ID",
+    good: "antigithub login --email x --password y",
+  },
+  {
+    problem: "warning: skipping file — URL expired",
+    cause: "Old files have expired download links",
+    fix: "Re-push those files to regenerate fresh URLs",
+    bad: "—",
+    good: "antigithub push --repo ID --message \"Refresh files\"",
+  },
+];
+
+/* ─── sub-components ────────────────────────────────────── */
+function CodeBlock({ code, lang }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div className={`guide-code-block ${lang === "output" ? "output" : ""}`}>
+      <div className="guide-code-header">
+        <span className="guide-code-lang">{lang === "output" ? "Terminal Output" : lang}</span>
+        {lang !== "output" && (
+          <button className="guide-copy-btn" onClick={copy}>
+            {copied ? "✓ Copied!" : "Copy"}
+          </button>
+        )}
+      </div>
+      <pre><code>{code}</code></pre>
+    </div>
+  );
+}
+
+function InfoBox({ type, children }) {
+  const icons = { tip: "💡", warning: "⚠️", note: "📝" };
+  const labels = { tip: "Tip", warning: "Warning", note: "Note" };
+  return (
+    <div className={`guide-infobox guide-infobox--${type}`}>
+      <span className="guide-infobox-icon">{icons[type]}</span>
+      <div>
+        <strong>{labels[type]}: </strong>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ─── main page ─────────────────────────────────────────── */
 const Guide = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  const navigate = useNavigate();
+  const [activeStep, setActiveStep] = useState("install");
+
+  const activeData = STEPS.find((s) => s.id === activeStep);
 
   return (
     <>
       <Navbar />
       <div className="guide-page">
-        <div className="guide-sidebar">
-          <nav>
-            <div className="guide-nav-title">AbhayGit Docs</div>
-            <a href="#intro" className="guide-nav-link">Introduction</a>
-            <a href="#howitworks" className="guide-nav-link">How it Works</a>
-            <a href="#method1" className="guide-nav-link">Method 1: Local Developer</a>
-            <a href="#method2" className="guide-nav-link">Method 2: Remote API Push</a>
-          </nav>
+
+        {/* Hero */}
+        <div className="guide-hero">
+          <div className="guide-hero-badge">📦 antigithub-cli</div>
+          <h1 className="guide-hero-title">CLI Documentation</h1>
+          <p className="guide-hero-sub">
+            Push and pull code from any terminal — just like Git, but for AntiGitHUB.
+            Works on Windows, Mac & Linux. All you need is Node.js.
+          </p>
+          <div className="guide-hero-install">
+            <CodeBlock lang="bash" code="npm install -g antigithub-cli" />
+          </div>
+          <div className="guide-hero-links">
+            <a href="https://www.npmjs.com/package/antigithub-cli" target="_blank" rel="noreferrer" className="guide-badge-link">
+              📦 View on npm
+            </a>
+            <a href="https://antigit.vercel.app/" target="_blank" rel="noreferrer" className="guide-badge-link">
+              🌐 Open Web App
+            </a>
+          </div>
         </div>
 
-        <main className="guide-content">
-          <div className="guide-header">
-            <h1 id="intro">🚀 AbhayGit CLI (Simple & Beginner-Friendly)</h1>
-            <p className="guide-subtitle">
-              This CLI lets you push your local files to your GitHub-like system so they appear instantly in your frontend.
-            </p>
+        {/* Main Layout */}
+        <div className="guide-layout">
+
+          {/* Sidebar Navigation */}
+          <nav className="guide-sidebar">
+            <div className="guide-sidebar-section">
+              <div className="guide-sidebar-label">Getting Started</div>
+              {STEPS.map((s) => (
+                <button
+                  key={s.id}
+                  className={`guide-nav-item ${activeStep === s.id ? "active" : ""}`}
+                  onClick={() => setActiveStep(s.id)}
+                >
+                  <span className="guide-nav-icon">{s.icon}</span>
+                  <span>{s.title}</span>
+                </button>
+              ))}
+            </div>
+            <div className="guide-sidebar-section">
+              <div className="guide-sidebar-label">Reference</div>
+              <button className={`guide-nav-item ${activeStep === "utils" ? "active" : ""}`} onClick={() => setActiveStep("utils")}>
+                <span className="guide-nav-icon">⚙️</span>
+                <span>Other Commands</span>
+              </button>
+              <button className={`guide-nav-item ${activeStep === "mistakes" ? "active" : ""}`} onClick={() => setActiveStep("mistakes")}>
+                <span className="guide-nav-icon">🐛</span>
+                <span>Common Mistakes</span>
+              </button>
+            </div>
+          </nav>
+
+          {/* Content Area */}
+          <main className="guide-content">
+
+            {/* Steps */}
+            {activeData && (
+              <div className="guide-content-card">
+                <div className="guide-content-header">
+                  <span className={`guide-step-badge badge--${activeData.badgeColor}`}>
+                    {activeData.badge}
+                  </span>
+                  <h2 className="guide-content-title">
+                    {activeData.icon} {activeData.title}
+                  </h2>
+                  <p className="guide-content-subtitle">{activeData.subtitle}</p>
+                </div>
+                <div className="guide-content-body">
+                  {activeData.content}
+                </div>
+                {/* Prev / Next navigation */}
+                <div className="guide-step-nav">
+                  {STEPS.findIndex((s) => s.id === activeStep) > 0 && (
+                    <button
+                      className="guide-step-btn prev"
+                      onClick={() => {
+                        const i = STEPS.findIndex((s) => s.id === activeStep);
+                        setActiveStep(STEPS[i - 1].id);
+                      }}
+                    >
+                      ← {STEPS[STEPS.findIndex((s) => s.id === activeStep) - 1]?.title}
+                    </button>
+                  )}
+                  {STEPS.findIndex((s) => s.id === activeStep) < STEPS.length - 1 && (
+                    <button
+                      className="guide-step-btn next"
+                      onClick={() => {
+                        const i = STEPS.findIndex((s) => s.id === activeStep);
+                        setActiveStep(STEPS[i + 1].id);
+                      }}
+                    >
+                      {STEPS[STEPS.findIndex((s) => s.id === activeStep) + 1]?.title} →
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Other Commands */}
+            {activeStep === "utils" && (
+              <div className="guide-content-card">
+                <div className="guide-content-header">
+                  <h2 className="guide-content-title">⚙️ Other Commands</h2>
+                  <p className="guide-content-subtitle">Useful utilities for managing your session.</p>
+                </div>
+                <div className="guide-content-body">
+                  <div className="guide-utils-grid">
+                    {UTILS.map((u, i) => (
+                      <div key={i} className="guide-util-card">
+                        <div className="guide-util-icon">{u.icon}</div>
+                        <CodeBlock lang="bash" code={u.cmd} />
+                        <p className="guide-util-desc">{u.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Common Mistakes */}
+            {activeStep === "mistakes" && (
+              <div className="guide-content-card">
+                <div className="guide-content-header">
+                  <h2 className="guide-content-title">🐛 Common Mistakes & Fixes</h2>
+                  <p className="guide-content-subtitle">
+                    Things that trip up most new users — and how to fix them instantly.
+                  </p>
+                </div>
+                <div className="guide-content-body">
+                  {MISTAKES.map((m, i) => (
+                    <div key={i} className="guide-mistake-card">
+                      <div className="guide-mistake-problem">
+                        <span className="guide-mistake-label">Problem</span>
+                        <code>{m.problem}</code>
+                      </div>
+                      <div className="guide-mistake-row">
+                        <div className="guide-mistake-col">
+                          <span className="guide-mistake-label cause">Cause</span>
+                          <p>{m.cause}</p>
+                        </div>
+                        <div className="guide-mistake-col">
+                          <span className="guide-mistake-label fix">Fix</span>
+                          <p>{m.fix}</p>
+                        </div>
+                      </div>
+                      <div className="guide-mistake-compare">
+                        <div className="guide-mistake-bad">
+                          <span>✗ Wrong</span>
+                          <code>{m.bad}</code>
+                        </div>
+                        <div className="guide-mistake-good">
+                          <span>✓ Correct</span>
+                          <code>{m.good}</code>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </main>
+        </div>
+
+        {/* Quick Reference Footer */}
+        <div className="guide-quick-ref">
+          <h2>⚡ Quick Reference</h2>
+          <div className="guide-quick-grid">
+            {[
+              { label: "Install CLI", code: "npm install -g antigithub-cli" },
+              { label: "Login", code: "antigithub login --email x@x.com --password pass" },
+              { label: "Create PAT", code: "antigithub pat:create --name my-device" },
+              { label: "Push code", code: "antigithub push --repo REPO_ID --message \"msg\"" },
+              { label: "Pull code", code: "antigithub pull --repo REPO_ID --path ./folder" },
+              { label: "Who am I?", code: "antigithub whoami" },
+            ].map((item, i) => (
+              <div key={i} className="guide-quick-item">
+                <span className="guide-quick-label">{item.label}</span>
+                <CodeBlock lang="bash" code={item.code} />
+              </div>
+            ))}
           </div>
+        </div>
 
-          <section className="guide-section" id="howitworks">
-            <h2>🧠 What is this CLI?</h2>
-            <p>
-              Think of this like a simplified version of <code>git push</code>. Instead of Git, you are using the AbhayGit CLI tool to securely transmit your codebase directly to your backend storage!
-            </p>
-            <div className="guide-alert guide-alert-tip">
-              <strong>Your Folder → CLI → Backend API → Storage (S3) → Frontend UI</strong>
-              <br/>• CLI reads your files
-              <br/>• Backend saves them under your repo
-              <br/>• Frontend displays them
-            </div>
-            
-            <p><strong>There are two ways to push code depending on who you are:</strong></p>
-          </section>
-
-          <hr className="guide-divider" />
-
-          <section className="guide-section" id="method1">
-            <h2>Method 1: Developer Full Setup (Local Engine)</h2>
-            <p>
-              If you are a developer looking to clone the complete AbhayGit platform repository and run it entirely on your own machine, you can use the native <strong>Git-like</strong> commands provided inside the repository package:
-            </p>
-            <ol className="guide-list">
-              <li>Open the <code>backend</code> terminal in the cloned repository.</li>
-              <li><code>node index.js init</code> (Creates a hidden <code>.AbhayGit</code> staging environment).</li>
-              <li><code>node index.js add .</code> (Securely stages your modified files).</li>
-              <li><code>node index.js commit "My update"</code> (Builds a secure offline hash tree).</li>
-              <li><code>node index.js push</code> (Synchronizes your offline staging tree to your configured Amazon S3 buckets).</li>
-            </ol>
-            <p>
-              This requires your own MongoDB instance, S3 buckets, and complete source code configuration running locally.
-            </p>
-          </section>
-
-          <hr className="guide-divider" />
-
-          <section className="guide-section" id="method2">
-            <h2>Method 2: Standalone User Push (Remote API)</h2>
-            <p>
-              If you are a normal user wanting to push your own project online to the live AbhayGit platform (without needing our platform source code), you will use our remote <code>push-api</code> tunnel.
-            </p>
-
-            <h3>✅ Prerequisites</h3>
-            <ul className="guide-list">
-              <li>Ensure you have the AbhayGit CLI node package downloaded.</li>
-              <li>Have your target <strong>Repository ID</strong>.</li>
-            </ul>
-
-            <h3 style={{ marginTop: "32px" }}>🔹 Step 1: Login (One Time)</h3>
-            <p>Securely save your credentials so your CLI knows who you are:</p>
-            <div className="code-block">
-              <div className="code-header">Terminal</div>
-              <pre><code>node index.js login --backend https://your-backend-url.com --email you@example.com --password yourPassword</code></pre>
-            </div>
-            <p>👉 This saves your login token locally on your system.</p>
-
-            <h3 style={{ marginTop: "32px" }}>🔹 Step 2: Create PAT (Important)</h3>
-            <p>Generate a Personal Access Token to authorize hardware pushes:</p>
-            <div className="code-block">
-              <div className="code-header">Terminal</div>
-              <pre><code>node index.js pat:create --backend https://your-backend-url.com --name "my-laptop"</code></pre>
-            </div>
-            <p>👉 You will get a token (e.g., <code>pat_abc123xyz</code>). <strong>Copy this token.</strong></p>
-
-            <h3 style={{ marginTop: "32px" }}>🔹 Step 3: Get your Repository ID</h3>
-            <p>Open the AbhayGit frontend dashboard, find your repository, and copy the long ID displayed in your browser URL (e.g. <code>repo_123abc</code>).</p>
-
-            <h3 style={{ marginTop: "32px" }}>🚀 Step 4: Push Your Code</h3>
-            
-            <p><strong>From inside your project folder (Recommended):</strong></p>
-            <div className="code-block">
-              <div className="code-header">Terminal</div>
-              <pre><code>cd path/to/your/project
-node index.js push-api --backend https://your-backend-url.com --repo &#60;repoId&#62; --token &#60;PAT&#62; --message "initial commit" --path .</code></pre>
-            </div>
-            
-            <p style={{ marginTop: "24px" }}><strong>Pushing specific folders from anywhere:</strong></p>
-            <div className="code-block">
-              <div className="code-header">Terminal</div>
-              <pre><code>node index.js push-api --backend https://your-backend-url.com --repo &#60;repoId&#62; --token &#60;PAT&#62; --message "upload" --path "C:\Users\YourName\Desktop\my-project"</code></pre>
-            </div>
-
-            <div className="guide-alert guide-alert-note">
-              <strong>⚠️ Important Notes:</strong> Always use quotes if your path has spaces! (e.g., <code>--path "C:\Users\Your Name\Desktop\my project"</code>). <strong>Best practice:</strong> Always push an entire folder, not a single file.
-            </div>
-
-            <h3 style={{ marginTop: "32px", color: "#4493f8" }}>⬇️ Step 5: Pulling Changes</h3>
-            <p><strong>To safely synchronize your system and download a remote repository to your local folder:</strong></p>
-            <div className="code-block">
-              <div className="code-header">Terminal</div>
-              <pre><code>node index.js pull-api --backend https://your-backend-url.com --repo &#60;repoId&#62; --token &#60;PAT&#62; --path .</code></pre>
-            </div>
-            
-            <h3 style={{ marginTop: "32px", color: "#4493f8" }}>⏪ Step 6: Reverting Commits</h3>
-            <p><strong>To permanently undo changes and cleanly roll your remote repository back to a specific commit snapshot:</strong></p>
-            <div className="code-block">
-              <div className="code-header">Terminal</div>
-              <pre><code>node index.js revert-api --backend https://your-backend-url.com --repo &#60;repoId&#62; --token &#60;PAT&#62; --commit &#60;targetCommitId&#62;</code></pre>
-            </div>
-
-            <h3 style={{ marginTop: "32px" }}>❌ Common Errors & Fixes</h3>
-            <ul className="guide-list">
-              <li><strong>ECONNREFUSED</strong>: Backend not running or offline.</li>
-              <li><strong>Unauthorized</strong>: Invalid token. Create a new PAT and ensure your config is saved.</li>
-              <li><strong>Repo not found</strong>: Wrong Repository ID. Copy the correct ID from the web interface.</li>
-              <li><strong>Forbidden</strong>: Permission issue. Make sure you are the repo owner or added as a collaborator!</li>
-              <li><strong>Files not showing up</strong>: Reason is that you tried using the Developer <code>.AbhayGit</code> native push method on a remote server. Always use <code>push-api</code> for live deployments!</li>
-            </ul>
-
-          </section>
-
-        </main>
       </div>
     </>
   );
