@@ -1,0 +1,173 @@
+.gitchat-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 9999;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.gitchat-toggle-btn {
+  background: linear-gradient(135deg, #6e40c9, #8957e5);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gitchat-toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.gitchat-window {
+  width: 350px;
+  height: 500px;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.gitchat-header {
+  background-color: #161b22;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #30363d;
+}
+
+.gitchat-header h3 {
+  margin: 0;
+  color: #c9d1d9;
+  font-size: 16px;
+}
+
+.gitchat-close-btn {
+  background: none;
+  border: none;
+  color: #8b949e;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.gitchat-close-btn:hover {
+  color: #c9d1d9;
+}
+
+.gitchat-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gitchat-msg-wrapper {
+  display: flex;
+}
+
+.gitchat-msg-wrapper.user {
+  justify-content: flex-end;
+}
+
+.gitchat-msg-wrapper.model {
+  justify-content: flex-start;
+}
+
+.gitchat-msg-bubble {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.user .gitchat-msg-bubble {
+  background-color: #238636;
+  color: #ffffff;
+  border-bottom-right-radius: 2px;
+}
+
+.model .gitchat-msg-bubble {
+  background-color: #21262d;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  border-bottom-left-radius: 2px;
+}
+
+.gitchat-msg-bubble.loading {
+  font-weight: bold;
+  letter-spacing: 2px;
+  animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
+.gitchat-input-area {
+  padding: 15px;
+  background-color: #161b22;
+  border-top: 1px solid #30363d;
+  display: flex;
+  gap: 10px;
+}
+
+.gitchat-input-area input {
+  flex: 1;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.gitchat-input-area input:focus {
+  outline: none;
+  border-color: #58a6ff;
+}
+
+.gitchat-input-area button {
+  background-color: #238636;
+  color: white;
+  border: none;
+  padding: 0 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.gitchat-input-area button:hover:not(:disabled) {
+  background-color: #2ea043;
+}
+
+.gitchat-input-area button:disabled {
+  background-color: #23863688;
+  color: #ffffff88;
+  cursor: not-allowed;
+}
+
+.gitchat-window.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+  z-index: 99999;
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../user/Navbar";
 import "./repositoryPage.css";
@@ -25,6 +25,11 @@ const RepositoryPage = () => {
   const [originalFileContent, setOriginalFileContent] = useState("");
   const [isEditingFile, setIsEditingFile] = useState(false);
   const [editorContent, setEditorContent] = useState("");
+  const [isFileLoading, setIsFileLoading] = useState(false);
+  const currentFetchRef = useRef(0);
+  const [explanationsCache, setExplanationsCache] = useState({});
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [isExplaining, setIsExplaining] = useState(false);
 
   const [isCreatingFile, setIsCreatingFile] = useState(false);
   const [newFileName, setNewFileName] = useState("");
@@ -79,6 +84,34 @@ const RepositoryPage = () => {
       }
     } catch (err) {
       console.error("Repo fetch error:", err);
+    }
+  };
+
+  const handleExplainCode = async (forceRegenerate = false) => {
+    if (!forceRegenerate && explanationsCache[selectedFile]) {
+      setShowExplanation(true);
+      return;
+    }
+    setIsExplaining(true);
+    setShowExplanation(true);
+    setExplanationsCache(prev => ({ ...prev, [selectedFile]: "✨ Explaining..." }));
+    
+    try {
+      const res = await fetch(`${API_BASE_URL}/ai/explain`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: fileContent, filename: selectedFile })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setExplanationsCache(prev => ({ ...prev, [selectedFile]: data.text }));
+      } else {
+        setExplanationsCache(prev => ({ ...prev, [selectedFile]: data.message || "Failed to explain code." }));
+      }
+    } catch (err) {
+      setExplanationsCache(prev => ({ ...prev, [selectedFile]: "Network error or API is down." }));
+    } finally {
+      setIsExplaining(false);
     }
   };
 
@@ -142,18 +175,26 @@ const RepositoryPage = () => {
 
   const openFile = async (url, fileName) => {
     try {
+      const fetchId = ++currentFetchRef.current;
       setSelectedFile(fileName);
+      setIsFileLoading(true);
+      setFileContent("");
+      setOriginalFileContent("");
+      setEditorContent("");
+      setIsEditingFile(false);
 
       const res = await fetch(url);
-
       const text = await res.text();
 
-      setFileContent(text);
-      setOriginalFileContent(text);
-      setEditorContent(text);
-      setIsEditingFile(false);
+      if (fetchId === currentFetchRef.current) {
+        setFileContent(text);
+        setOriginalFileContent(text);
+        setEditorContent(text);
+        setIsFileLoading(false);
+      }
     } catch (err) {
       console.error("File open error:", err);
+      setIsFileLoading(false);
     }
   };
 
@@ -692,6 +733,24 @@ const RepositoryPage = () => {
                   <div className="file-header">
                     <h3>{selectedFile}</h3>
                     <div style={{ display: "flex", gap: 8 }}>
+                      <button 
+                        className="small-btn" 
+                        onClick={() => {
+                          if (explanationsCache[selectedFile]) {
+                            setShowExplanation(!showExplanation);
+                          } else {
+                            handleExplainCode();
+                          }
+                        }}
+                        disabled={isExplaining}
+                        style={{ backgroundColor: "#238636", color: "white", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}
+                      >
+                        {isExplaining 
+                          ? "✨ Explaining..." 
+                          : explanationsCache[selectedFile] 
+                            ? (showExplanation ? "✨ Hide Explanation" : "✨ Show Explanation") 
+                            : "✨ Explain Code"}
+                      </button>
                       {canWrite && (
                         <>
                           <button
@@ -711,7 +770,26 @@ const RepositoryPage = () => {
                     </div>
                   </div>
 
-                  {isEditingFile ? (
+                  {showExplanation && explanationsCache[selectedFile] && (
+                    <div style={{ backgroundColor: "#0d1117", border: "1px solid #30363d", padding: "16px", borderRadius: "6px", margin: "16px", color: "#c9d1d9" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                        <h4 style={{ margin: 0, color: "#58a6ff" }}>✨ AI Explanation</h4>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                          <button onClick={() => handleExplainCode(true)} disabled={isExplaining} style={{ background: "none", border: "1px solid #58a6ff", color: "#58a6ff", borderRadius: "4px", padding: "4px 8px", cursor: "pointer", fontSize: "12px", opacity: isExplaining ? 0.5 : 1 }}>Regenerate</button>
+                          <button onClick={() => setShowExplanation(false)} style={{ background: "none", border: "1px solid #8b949e", color: "#8b949e", borderRadius: "4px", padding: "4px 8px", cursor: "pointer", fontSize: "12px" }}>Hide</button>
+                        </div>
+                      </div>
+                      <div style={{ fontSize: "14px", lineHeight: "1.5", overflowX: "auto" }}>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{explanationsCache[selectedFile]}</ReactMarkdown>
+                      </div>
+                    </div>
+                  )}
+
+                  {isFileLoading ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: '40px', color: '#8b949e', fontSize: '16px' }}>
+                       Loading file...
+                    </div>
+                  ) : isEditingFile ? (
                     <div>
                       <textarea
                         className="repo-editor"

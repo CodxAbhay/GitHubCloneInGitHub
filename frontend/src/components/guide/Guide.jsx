@@ -46,7 +46,7 @@ const STEPS = [
         </p>
         <CodeBlock
           lang="bash"
-          code={`antigithub login --email your@email.com --password yourpassword`}
+          code={`antigithub login --email your@gmail.com --password yourpassword`}
         />
         <p className="guide-para">On success you'll see:</p>
         <CodeBlock
@@ -538,7 +538,7 @@ const Guide = () => {
           <div className="guide-quick-grid">
             {[
               { label: "Install CLI", code: "npm install -g antigithub-cli" },
-              { label: "Login", code: "antigithub login --email x@x.com --password pass" },
+              { label: "Login", code: "antigithub login --gmail x@x.com --password pass" },
               { label: "Create PAT", code: "antigithub pat:create --name my-device" },
               { label: "Push code", code: "antigithub push --repo REPO_ID --message \"msg\"" },
               { label: "Pull code", code: "antigithub pull --repo REPO_ID --path ./folder" },
